@@ -1,11 +1,19 @@
 package com.mysql.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +23,7 @@ import com.mysql.model.Biodata;
 import com.mysql.model.BiodataRowMapper;
 
 @RestController
+@RequestMapping("/biodata")
 public class TestingController {
 	
 	
@@ -37,42 +46,92 @@ public class TestingController {
 			return biodata;	
 		}
 		
-			public int insertBiodata(Biodata biodata) {
+		public int insertBiodata(Biodata biodata) {
 				return jdbc.update("insert into Biodata(nik,nama,alamat,id_salary) values ('"+biodata.getNik()+"','"+biodata.getNama()+"','"+biodata.getAlamat()+"',"+biodata.getId_Salary()+")");
 		}
 	
 	
-		@RequestMapping("/testing")
-		public String testPage(){ 
+		public int updateBiodata(String nik, Biodata biodata) {
+			return jdbc.update("UPDATE biodata set `nama`='"+biodata.getNama()+"',`alamat`='"+biodata.getAlamat()+"',`id_salary`="+biodata.getId_Salary()+" WHERE nik = '"+biodata.getNik()+"'");
+		}
+
+		public int deleteBiodata(String nik) {
+			return jdbc.update("DELETE from `biodata` WHERE `nik`= '"+nik+"';");
+		}
 		
-//			DaoBiodata tblBiodata = new DaoBiodata();
 		
-			List<Biodata> lstBiodata = getBiodata();
-			
-			String dummy = "";
-			for (int x=0; x < lstBiodata.size(); x++) {
-				dummy+= lstBiodata.get(x).getNama() + ",";
-			}
-			return dummy;
-	}
-	
-	
-		@RequestMapping("/insert")
-		public String insertBiodata() {
 		
-			Biodata biodata = new Biodata();
-			biodata.setNik("N05");
-			biodata.setNama("Ari Setiawan");
-			biodata.setAlamat("Cibubur");
-			biodata.setId_Salary(5);
+		
+		
+		@GetMapping("/view")
+		public List<Biodata> list(){
+			return getBiodata();
+		}
+		
+		
+		@PostMapping("/")
+		public String add(@RequestBody Biodata biodata) {
 			
 			if(this.insertBiodata(biodata)==1) {
 				return "Insert Data Berhasil";
 			}else {
-				return "Insert Data Gagal";
+				return "Gagal Insert Data";
+			}
 		}
 		
-	}
+		
+		@PutMapping("/{nik}")
+		public ResponseEntity<?> update(@RequestBody Biodata biodata, @PathVariable String nik){
+			try {
+				updateBiodata(nik,biodata);
+				return new ResponseEntity<>(HttpStatus.OK);
+			} catch (NoSuchElementException e) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+			
+		}
+		
+		
+		@DeleteMapping("/{nik}")
+		public void delete(@PathVariable String nik) {
+			deleteBiodata(nik);
+			System.out.println("Berhasil Menghapus Data");
+		}
+		
+		
+		
+		
+//		@RequestMapping("/testing")
+//		public String testPage(){ 
+//		
+////			DaoBiodata tblBiodata = new DaoBiodata();
+//		
+//			List<Biodata> lstBiodata = getBiodata();
+//			
+//			String dummy = "";
+//			for (int x=0; x < lstBiodata.size(); x++) {
+//				dummy+= lstBiodata.get(x).getNama() + ",";
+//			}
+//			return dummy;
+//	}
+	
+	
+//		@RequestMapping("/insert")
+//		public String insertBiodata() {
+//		
+//			Biodata biodata = new Biodata();
+//			biodata.setNik("N05");
+//			biodata.setNama("Ari Setiawan");
+//			biodata.setAlamat("Cibubur");
+//			biodata.setId_Salary(5);
+//			
+//			if(this.insertBiodata(biodata)==1) {
+//				return "Insert Data Berhasil";
+//			}else {
+//				return "Insert Data Gagal";
+//		}
+//		
+//	}
 	
 	
 	
