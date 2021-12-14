@@ -1,12 +1,11 @@
 package com.mysql.dao;
 
-import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.mysql.model.Biodata;
-import com.mysql.model.BiodataRowMapper;
+
 
 public class DaoBiodata {
 

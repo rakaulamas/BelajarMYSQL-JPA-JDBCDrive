@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,10 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mysql.dao.DaoBiodata;
+
 import com.mysql.model.Biodata;
 import com.mysql.model.BiodataRowMapper;
 
@@ -52,7 +51,7 @@ public class TestingController {
 	
 	
 		public int updateBiodata(String nik, Biodata biodata) {
-			return jdbc.update("UPDATE biodata set `nama`='"+biodata.getNama()+"',`alamat`='"+biodata.getAlamat()+"',`id_salary`="+biodata.getId_Salary()+" WHERE nik = '"+biodata.getNik()+"'");
+			return jdbc.update("UPDATE biodata set `nama`='"+biodata.getNama()+"',`alamat`='"+biodata.getAlamat()+"',`id_salary`="+biodata.getId_Salary()+" WHERE nik = '"	+biodata.getNik()+"'");
 		}
 
 		public int deleteBiodata(String nik) {
@@ -64,7 +63,7 @@ public class TestingController {
 		
 		
 		@GetMapping("/view")
-		public List<Biodata> list(){
+	 	public List<Biodata> list(){
 			return getBiodata();
 		}
 		
@@ -93,9 +92,12 @@ public class TestingController {
 		
 		
 		@DeleteMapping("/{nik}")
-		public void delete(@PathVariable String nik) {
-			deleteBiodata(nik);
-			System.out.println("Berhasil Menghapus Data");
+		public String delete(@PathVariable String nik) {
+			if(deleteBiodata(nik)==1) {
+				return "Berhasil Hapus Biodata";
+			}else {
+			return "Gagal Hapus Biodata";
+			}
 		}
 		
 		
