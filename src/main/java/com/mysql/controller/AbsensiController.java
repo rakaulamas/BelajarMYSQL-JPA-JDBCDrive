@@ -33,6 +33,20 @@ public class AbsensiController {
 		
 	}
 	
+	public List<Absensi> searchByStartYear(int year){
+		String qry= "Select * from absensi where start_date like '"+year+"%' ";
+		List<Absensi> absensi = jdbc.query(qry, new AbsensiRowMapper());
+		return absensi;
+	}
+	
+	public List<Absensi> searchByEndYear(Absensi absensi){
+		String qry="SELECT * FROM absensi WHERE end_date BETWEEN '"+absensi.getStart_date()+"' AND '"+absensi.getEnd_date()+"'";
+		List<Absensi> absensii = jdbc.query(qry, new AbsensiRowMapper());
+		return absensii;
+	}
+	
+	
+	
 	public String insertAbsensi(Absensi absensi) {
 		
 		int sukses =jdbc.update("INSERT INTO `absensi`(`id`, `nik`, `start_date`, `end_date`) VALUES ('"+absensi.getId()+"','"+absensi.getNik()+"','"+absensi.getStart_date()+"','"+absensi.getEnd_date()+"')");
@@ -83,6 +97,19 @@ public class AbsensiController {
 		public List<Absensi> getAll(){
 			return getAbsensi();
 		}
+	
+	
+	@GetMapping("/by-startyear/{year}")
+	public List<Absensi> getByYear(@PathVariable int year){
+		return searchByStartYear(year);
+	}
+	
+	
+	@GetMapping("/byendyear/")
+	public List<Absensi> getByEndYear(@RequestBody Absensi absensi){
+		return searchByEndYear(absensi);
+	}
+	
 	
 	@PostMapping("/")
 		public String addData(@RequestBody Absensi absensi) {
